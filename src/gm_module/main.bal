@@ -37,14 +37,14 @@ gmail:Client gmailClient = new(gmailConfig);
         
         // Gmail Information
         string userId = "me";
-        string inboxLabel = "INBOX";
-        string searchQuery = "subject:Invitation";
+        string inboxLabel = "CATEGORY_PERSONAL";
+        string searchQuery = "subject: Invitation";
 
         // Filter out emails in the personal inbox with search query "Invitation"
         gmail:MsgSearchFilter searchFilter = {
             includeSpamTrash: false, 
             labelIds: [inboxLabel], 
-            maxResults: "20",
+            maxResults: "50",
             q: searchQuery
         };
 
@@ -63,10 +63,27 @@ gmail:Client gmailClient = new(gmailConfig);
                 if (message is gmail:Message) {
                     string subject = <@untainted>message.headerSubject;
                     string[] labelIds = <@untainted>message.labelIds;
+
+                    string invitationTopic = "";
+                    string invitationDateAndTime = "";
+                    string invitationDate = ""; 
+                    string invitationTime = "";
                     
-                    log:printInfo("Subject : " + subject);
-                    foreach var labelId in labelIds {
-                        io:println("Label : " + labelId);
+                    // String filter for certain types of Subjects
+                    if (subject.startsWith("Invitation:") || subject.startsWith("Updated invitation:") ||subject.startsWith("Re: Updated invitation:") || subject.startsWith("Re: Invitation:")) {
+                        io:println("\nSubject : " + subject);
+
+                        
+                        invitationTopic = subject.substring(0,<int>subject.indexOf("@")); //Topic of the invitation
+                        invitationDateAndTime = subject.substring(<int>subject.indexOf("@")+1, <int>subject.indexOf("(IST)"));
+                        invitationDate = invitationDateAndTime.substring(0, <int>invitationDateAndTime.indexOf(",") + 6);
+                        invitationTime = invitationDateAndTime.substring(<int>invitationDateAndTime.indexOf(",") + 6, invitationDateAndTime.length());
+                        
+                        io:println("TOPIC : " + invitationTopic);
+                        io:println("DATE AND TIME : " + invitationDateAndTime);
+                        io:println("DATE ONLY : " + invitationDate);
+                        io:println("TIME ONLY : " + invitationTime);
+
                     }
 
                 } else {

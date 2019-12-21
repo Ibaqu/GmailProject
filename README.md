@@ -1,6 +1,6 @@
 # Gmail-Spreadsheet Integration Project
 
-Makes use of the Ballerina Gmail connector to pull emails from the Inbox based on a specific filter. Scan the Subject of the Email and extract data to export to a spreadsheet
+Makes use of the Ballerina Gmail connector to pull emails from the Inbox based on a specific filter. Scan the Subject of the Email and extract data to export to a Google spreadsheet using the Gsheets connector
 
 ## How to Build
 
@@ -25,10 +25,13 @@ Makes use of the Ballerina Gmail connector to pull emails from the Inbox based o
 
 ## Current Iteration
 
-- Simply pulls emails based on the filter and logs the result
+- Improved filter to check Personal emails only
+- Extracted 'Invitation' data from the Subject and printed result
+- ~~Simply pulls emails based on the filter and logs the result~~
 
 ## TODO
 
-- Sort out the Gmail filter to pull personal emails only
-- Extract the information from the Email subject by manipulating the subject string
+- Write separate util service for extracting data from the subject 
 - Upload the data to a spreadsheet
+- ~~Sort out the Gmail filter to pull personal emails only~~
+- ~~Extract the information from the Email subject by manipulating the subject string~~
