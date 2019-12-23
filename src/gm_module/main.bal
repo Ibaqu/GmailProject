@@ -52,6 +52,12 @@ gmail:Client gmailClient = new(gmailConfig);
         gmail:MessageListPage|error mailList = gmailClient->listMessages(userId, searchFilter);
 
         if (mailList is gmail:MessageListPage) {
+            
+            string invitationTopic = "";
+            string invitationDate = ""; 
+            string invitationTime = "";
+            string subject = "";
+            string[] labelIds = [];
 
             foreach json email in mailList.messages {
                 string messageId = <@untainted><string>email.messageId;
@@ -61,31 +67,23 @@ gmail:Client gmailClient = new(gmailConfig);
                 gmail:Message|error message = gmailClient->readMessage(userId, messageId);
 
                 if (message is gmail:Message) {
-                    string subject = <@untainted>message.headerSubject;
-                    string[] labelIds = <@untainted>message.labelIds;
+                    subject = <@untainted>message.headerSubject;
+                    labelIds = <@untainted>message.labelIds;
 
-                    string invitationTopic = "";
-                    string invitationDateAndTime = "";
-                    string invitationDate = ""; 
-                    string invitationTime = "";
-                    
                     // String filter for certain types of Subjects
                     if (subject.startsWith("Invitation:") || subject.startsWith("Updated invitation:") ||subject.startsWith("Re: Updated invitation:") || subject.startsWith("Re: Invitation:")) {
+                        
                         io:println("\nSubject : " + subject);
+                        json jsonSubject = extractSubject(subject);
 
-                        
-                        invitationTopic = subject.substring(0,<int>subject.indexOf("@")); //Topic of the invitation
-                        invitationDateAndTime = subject.substring(<int>subject.indexOf("@")+1, <int>subject.indexOf("(IST)"));
-                        invitationDate = invitationDateAndTime.substring(0, <int>invitationDateAndTime.indexOf(",") + 6);
-                        invitationTime = invitationDateAndTime.substring(<int>invitationDateAndTime.indexOf(",") + 6, invitationDateAndTime.length());
-                        
+                        invitationTopic = jsonSubject.invitationTopic.toString();
+                        invitationDate = jsonSubject.invitationDate.toString();
+                        invitationTime = jsonSubject.invitationTime.toString();
+                    
                         io:println("TOPIC : " + invitationTopic);
-                        io:println("DATE AND TIME : " + invitationDateAndTime);
                         io:println("DATE ONLY : " + invitationDate);
                         io:println("TIME ONLY : " + invitationTime);
-
                     }
-
                 } else {
                     responseMessage = "Failed to extract message : " + message.toString();
                     log:printError(responseMessage);
@@ -103,4 +101,19 @@ gmail:Client gmailClient = new(gmailConfig);
             log:printError("Failed to Respond to Caller : " + result.toString());
         } 
     }
+}
+
+function extractSubject(string subject) returns json {
+    string invitationTopic = subject.substring(0, <int>subject.indexOf("@"));
+    string invitationDateAndTime = subject.substring(<int>subject.indexOf("@")+1, <int>subject.indexOf("(IST)"));
+    string invitationDate = invitationDateAndTime.substring(0, <int>invitationDateAndTime.indexOf(",") + 6);
+    string invitationTime = invitationDateAndTime.substring(<int>invitationDateAndTime.indexOf(",") + 6, invitationDateAndTime.length());
+
+    json jsonSubject = {
+        invitationTopic : invitationTopic,
+        invitationDate : invitationDate,
+        invitationTime : invitationTime
+    };
+
+    return jsonSubject;
 }
