@@ -76,7 +76,6 @@ service GmailInvitationService on new http:Listener(8080) {
             string invitationDate = "";
             string invitationTime = "";
             string subject = "";
-            string[] labelIds = [];
 
             string[][] records = [[]];
             records[0] = ["TOPIC", "DATE", "TIME"];
@@ -89,14 +88,12 @@ service GmailInvitationService on new http:Listener(8080) {
 
                 foreach json email in mailList.messages {
                     string messageId = <@untainted><string>email.messageId;
-                    string threadId = <@untainted><string>email.threadId;
 
                     //Read email using the message Id
                     gmail:Message | error message = gmailClient->readMessage(userId, messageId);
 
                     if (message is gmail:Message) {
                         subject = <@untainted>message.headerSubject;
-                        labelIds = <@untainted>message.labelIds;
 
                         // String filter for certain types of Subjects
                         if (subject.startsWith("Invitation:") || subject.startsWith("Updated invitation:") || subject.startsWith("Re: Updated invitation:") || subject.startsWith("Re: Invitation:")) {

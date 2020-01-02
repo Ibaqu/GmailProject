@@ -8,9 +8,11 @@ Makes use of the Ballerina Gmail connector to pull emails from the Inbox based o
 
 Download and install Ballerina from [here](https://ballerina.io/). Make sure you have your JAVA_HOME set
 
-### Gmail API Config
+### Gmail API and Gsheets API Credentials
 
-Use [this](https://docs.wso2.com/display/IntegrationCloud/Get+Credentials+from+Gmail) tutorial to obtain the necessary configs
+Use [this](https://docs.wso2.com/display/IntegrationCloud/Get+Credentials+from+Gmail) tutorial to obtain the necessary configs for Gmail.
+
+Use [this](https://docs.wso2.com/display/IntegrationCloud/Get+Credentials+for+Google+Spreadsheet) tutorial to obtain the necessary configs for Gsheets.
 
 ## How to Build
 
